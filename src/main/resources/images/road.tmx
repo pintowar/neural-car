@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="100" height="100" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="batalhao_tileset_cc_by_sa" tilewidth="32" tileheight="32">
+  <image source="batalhao_tileset_cc_by_sa.png" width="512" height="96"/>
+ </tileset>
+ <layer name="Ground" width="100" height="100">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3YMQ6AIBREQfT+h0YLLwBL3GImobXg5QthDNrcz7oOLNa8e5ds8n2LNSdmQ491enTRo8vOGaFHXmLv9cjxv+qiRxc9uqTPcT32mI8uqfuUHhnpufB+tSfdwXwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMA/Ji/2bVNAnAAA
+  </data>
+ </layer>
+ <layer name="Street" width="100" height="100">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3X0Q6CIBQAUF7yD/IHsv//xfKBxUgLKLLynI2pc2yMK9d7Q+CXHK/jtDIOG65rr6bGd/QhHtvK89OQPY/J/Tnc57Dh80v+a8+++WnlvnQ+dcTju9TEY6n2ijls7LK6fZjr1tL8X/r9OyftavZOPPor3bs5P6U11aN+UDzaxb1L89bSyP8JepM+puxaOy8VY6oPaffOeDgXr4s9eG2Nmvfu6lwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICbC2TAvxtAnAAA
+  </data>
+ </layer>
+ <layer name="Objects" width="100" height="100">
+  <properties>
+   <property name="cons" value="23"/>
+  </properties>
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3ZQQqDMBAFUMETtDdI73/IEjCQhRGnZkqp70HAhczif0wIrsuyrImLmNmZlW09E2bfQUYfWbPvoM+sDN+6PptzamZ1b5ndRZtNTMus72NWN/qIO5vZJx3pI65mNsr66neij7jMzPQRN8oscp6Ubp2ZzdjeeR712pY+rpuVWbuTZ8y+E+fHbznKrN9/HpNns2+UWTsPyvY8czZjR330nbgPfkfmvw99AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD8vzfDwDj+QJwAAA==
+  </data>
+ </layer>
+</map>
