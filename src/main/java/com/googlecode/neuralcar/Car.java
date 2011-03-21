@@ -25,6 +25,7 @@ public final class Car {
     private float animationY = 0;
     private final Scenario scenario;
     private float rotation = 0;
+    public static final int MAX_POINTS = 9;
 
     public Car(Scenario scenario) throws SlickException {
         this.scenario = scenario;
@@ -44,11 +45,21 @@ public final class Car {
         rotation = 0;
         animationX = 360;
         animationY = 240;
+        final float xi = animationX + 6;
+        final float xm = animationX + 12;
+        final float xf = animationX + 18;
+        final float yi = animationY + 2;
+        final float ym = animationY + 12;
+        final float yf = animationY + 22;
         animationPoly = new Polygon(new float[]{
-                    animationX + 6, animationY + 2,
-                    animationX + 18, animationY + 2,
-                    animationX + 18, animationY + 22,
-                    animationX + 6, animationY + 22
+                    xi, yi,
+                    xm, yi,
+                    xf, yi,
+                    xf, ym,
+                    xf, yf,
+                    xm, yf,
+                    xi, yf,
+                    xi, ym
                 });
     }
 
@@ -112,12 +123,19 @@ public final class Car {
         move(1);
     }
 
+    /**
+     * Move the car forward or backwards.
+     * @param i -1 for forward, 1 for backwards
+     * @throws SlickException
+     */
     private void move(int i) throws SlickException {
         if (i != -1 & i != 1) {
             throw new SlickException("Move not supported");
         }
-        float addX = i * 1.0f * ((float) Math.sin(Math.toRadians(-rotation)));
-        float addY = i * 1.0f * ((float) Math.cos(Math.toRadians(-rotation)));
+        float addX = i * (10.0f - situationPoints()) / 10
+                * ((float) Math.sin(Math.toRadians(-rotation)));
+        float addY = i * (10.0f - situationPoints()) / 10
+                * ((float) Math.cos(Math.toRadians(-rotation)));
         animationX += addX;
         animationY += addY;
         animationPoly.setCenterX(animationX + 12);
@@ -139,17 +157,22 @@ public final class Car {
         return new Float[]{point[0], point[1]};
     }
 
-    private void rotate(float rotate) throws SlickException {
-        rotation += rotate;
+    /**
+     * Rotate the car with a a certain degree.
+     * @param degree
+     * @throws SlickException
+     */
+    private void rotate(float degree) throws SlickException {
+        rotation += degree;
         rotation %= 360;
         if (rotation < 0) {
             rotation += 360;
         }
         for (int i = 0; i < animation.getFrameCount(); i++) {
-            animation.getImage(i).rotate(rotate);
+            animation.getImage(i).rotate(degree);
         }
         Transform trans = Transform.createRotateTransform(
-                (float) Math.toRadians(rotate));
+                (float) Math.toRadians(degree));
         Polygon aux = (Polygon) animationPoly.transform(trans);
         aux.setCenterX(animationPoly.getCenterX());
         aux.setCenterY(animationPoly.getCenterY());
@@ -161,12 +184,14 @@ public final class Car {
      * @return actual sum of weights points.
      */
     public int situationPoints() {
-        //TODO
-        int sumWeight = 0;
+        int sumWeight = -MAX_POINTS;
         sumWeight += scenario.tileWeight(new float[]{animationPoly.getCenterX(),
                     animationPoly.getCenterY()});
-        sumWeight += scenario.tileWeight(nextPoint(rotation, (int) (animationPoly.getHeight() / 2)));
-
+        int points = animationPoly.getPointCount();
+        for (int i = 0; i < points; i++) {
+            float[] p = animationPoly.getPoint(i);
+            sumWeight += scenario.tileWeight(new float[]{p[0], p[1]});
+        }
         return sumWeight;
     }
 
@@ -186,12 +211,19 @@ public final class Car {
         return result;
     }
 
-    private float[] nextPoint(float degree, float nexts) {
+    /**
+     * This method return the float point in certain distance and within a
+     * determined degree.
+     * @param degree
+     * @param distance
+     * @return desired point coordinates.
+     */
+    private float[] nextPoint(float degree, float distance) {
         float x = (float) (animationPoly.getCenterX()
-                - ((animationPoly.getWidth() / 2 + nexts)
+                - ((animationPoly.getWidth() / 2 + distance)
                 * Math.sin(Math.toRadians(-degree))));
         float y = (float) (animationPoly.getCenterY()
-                - ((animationPoly.getHeight() / 2 + nexts)
+                - ((animationPoly.getHeight() / 2 + distance)
                 * Math.cos(Math.toRadians(-degree))));
         return new float[]{x, y};
     }
@@ -201,19 +233,11 @@ public final class Car {
      * @param g
      */
     public void render(Graphics g) {
-        float[] a = nextPoint(rotation, 0);
-        float[] b = nextPoint(rotation + 90, 0);
-        float[] c = nextPoint(rotation - 90, 0);
-        float[] d = nextPoint(rotation + 180, 0);
-        g.drawLine(animationPoly.getCenterX() , animationPoly.getCenterY() ,
-                a[0], a[1]);
-        g.drawLine(animationPoly.getCenterX() , animationPoly.getCenterY() ,
-                b[0], b[1]);
-        g.drawLine(animationPoly.getCenterX() , animationPoly.getCenterY() ,
-                c[0], c[1]);
-        g.drawLine(animationPoly.getCenterX() , animationPoly.getCenterY() ,
-                d[0], d[1]);
-        g.draw(animationPoly);
-        //g.drawAnimation(animation, animationX, animationY);
+        /*g.draw(animationPoly);
+        for (int i = 90; i >= -90; i -= 45) {
+        float[] p = nextPoint(rotation + i, 20);
+        g.drawLine(animationPoly.getCenterX(), animationPoly.getCenterY(), p[0], p[1]);
+        }*/
+        g.drawAnimation(animation, animationX, animationY);
     }
 }

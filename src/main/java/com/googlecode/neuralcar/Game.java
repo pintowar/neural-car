@@ -5,7 +5,9 @@
 package com.googlecode.neuralcar;
 
 import com.googlecode.neuralcar.controller.Controller;
+import com.googlecode.neuralcar.controller.GeneticNeuralController;
 import com.googlecode.neuralcar.controller.HumanController;
+import com.googlecode.neuralcar.controller.ResilientNeuralController;
 import com.googlecode.neuralcar.util.Resources;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -20,7 +22,7 @@ public class Game extends BasicGame {
 
     private Scenario scenario;
     private Car car;
-    private Controller controller = new HumanController();
+    private Controller controller = new GeneticNeuralController();
 
     public Game(String title) {
         super(title);
