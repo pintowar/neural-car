@@ -18,7 +18,7 @@ import org.newdawn.slick.geom.Transform;
  */
 public final class Car {
 
-    public final float ROTATION = 5;
+    public final float ROTATION = (float) Math.toRadians(5);
     private Polygon animationPoly;
     private Animation animation;
     private float animationX = 0;
@@ -133,9 +133,9 @@ public final class Car {
             throw new SlickException("Move not supported");
         }
         float addX = i * (10.0f - situationPoints()) / 10
-                * ((float) Math.sin(Math.toRadians(-rotation)));
+                * ((float) Math.sin(-rotation));
         float addY = i * (10.0f - situationPoints()) / 10
-                * ((float) Math.cos(Math.toRadians(-rotation)));
+                * ((float) Math.cos(-rotation));
         animationX += addX;
         animationY += addY;
         animationPoly.setCenterX(animationX + 12);
@@ -158,21 +158,21 @@ public final class Car {
     }
 
     /**
-     * Rotate the car with a a certain degree.
-     * @param degree
+     * Rotate the car with a certain radian.
+     * @param radian
      * @throws SlickException
      */
-    private void rotate(float degree) throws SlickException {
-        rotation += degree;
-        rotation %= 360;
+    private void rotate(float radian) throws SlickException {
+        rotation += radian;
+        rotation %= (2 * Math.PI);
         if (rotation < 0) {
-            rotation += 360;
+            rotation += 2 * (Math.PI);
         }
         for (int i = 0; i < animation.getFrameCount(); i++) {
-            animation.getImage(i).rotate(degree);
+            animation.getImage(i).rotate((float) Math.toDegrees(radian));
         }
         Transform trans = Transform.createRotateTransform(
-                (float) Math.toRadians(degree));
+                (float) radian);
         Polygon aux = (Polygon) animationPoly.transform(trans);
         aux.setCenterX(animationPoly.getCenterX());
         aux.setCenterY(animationPoly.getCenterY());
@@ -197,34 +197,34 @@ public final class Car {
 
     /**
      * This method returns the weights for five key points in a semi circular
-     * range (180 degrees) with a certain range (proximity).
+     * range (PI radians) with a certain range (proximity).
      * @param proximity the range to look for weights.
      * @return array with 5 direction points.
      */
     public int[] nextMovesWeights(int proximity) {
         int[] result = new int[]{0, 0, 0, 0, 0};
-        result[0] = scenario.tileWeight(nextPoint(rotation + 90, proximity));
-        result[1] = scenario.tileWeight(nextPoint(rotation + 45, proximity));
+        result[0] = scenario.tileWeight(nextPoint(rotation + (float) (Math.PI / 2), proximity));
+        result[1] = scenario.tileWeight(nextPoint(rotation + (float) (Math.PI / 4), proximity));
         result[2] = scenario.tileWeight(nextPoint(rotation, proximity));
-        result[3] = scenario.tileWeight(nextPoint(rotation - 45, proximity));
-        result[4] = scenario.tileWeight(nextPoint(rotation - 90, proximity));
+        result[3] = scenario.tileWeight(nextPoint(rotation - (float) (Math.PI / 4), proximity));
+        result[4] = scenario.tileWeight(nextPoint(rotation - (float) (Math.PI / 2), proximity));
         return result;
     }
 
     /**
      * This method return the float point in certain distance and within a
-     * determined degree.
-     * @param degree
+     * determined radian.
+     * @param radian
      * @param distance
      * @return desired point coordinates.
      */
-    private float[] nextPoint(float degree, float distance) {
+    private float[] nextPoint(float radian, float distance) {
         float x = (float) (animationPoly.getCenterX()
                 - ((animationPoly.getWidth() / 2 + distance)
-                * Math.sin(Math.toRadians(-degree))));
+                * Math.sin(-radian)));
         float y = (float) (animationPoly.getCenterY()
                 - ((animationPoly.getHeight() / 2 + distance)
-                * Math.cos(Math.toRadians(-degree))));
+                * Math.cos(-radian)));
         return new float[]{x, y};
     }
 
