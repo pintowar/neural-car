@@ -33,10 +33,12 @@ import org.newdawn.slick.SlickException;
 public class ResilientNeuralController implements Controller {
 
     private final int DEFALUT_PROXIMITY = 15;
-    private final int MAX_ITERATION = 25;
+    private final int MAX_ITERATION = 70;
+    private final int MAX_CURVE = 20;
     private BasicNetwork network;
     private int iteration = 0;
     private List<NeuralDataPair> trainData = new ArrayList<NeuralDataPair>();
+    private List<Integer> moveBuffer = new ArrayList<Integer>();
     private boolean training = false;
 
     public ResilientNeuralController() {
@@ -108,12 +110,13 @@ public class ResilientNeuralController implements Controller {
 
         double[] normInput = new double[]{normalizeInput(moves[0]),
             normalizeInput(moves[1]), normalizeInput(moves[2]),
-            normalizeInput(moves[3]), normalizeInput(moves[4])/*,
-            ((10.0f - car.situationPoints()) / 5) - 1*/};
+            normalizeInput(moves[3]), normalizeInput(moves[4])
+        };
 
         NeuralData inputData = new BasicNeuralData(normInput);
         NeuralData outputData = network.compute(inputData);
         int rotation = denormalizeOutput((float) outputData.getData(0));
+        moveBuffer.add(rotation);
         if (rotation == 1) {
             car.rotateLeft();
         } else if (rotation == -1) {
@@ -128,16 +131,19 @@ public class ResilientNeuralController implements Controller {
 
         if (situationAfter <= situationBefore) {
             //if car not stucked
-            if (movement > 0) {
+            if (movement > 0 && !constantCurve(moveBuffer)) {
                 NeuralData input = new BasicNeuralData(normInput);
                 NeuralData output = new BasicNeuralData(new double[]{rotation});
                 for (int i = 0; i < Car.MAX_POINTS - situationAfter; i++) {
                     trainData.add(new BasicNeuralDataPair(input, output));
                 }
             } else {
-                System.out.println("Stucked!!");
+                //System.out.println("Stucked!!");
                 randomMoves(car);
             }
+        }
+        if(moveBuffer.size() >= MAX_CURVE){
+            moveBuffer.clear();
         }
     }
 
@@ -151,8 +157,10 @@ public class ResilientNeuralController implements Controller {
 
             do {
                 train.iteration();
-                if(epoch > 0)System.out.println("Epoch #" + epoch + " Error:" + (train.getError() * 100.0) + "%");
-                epoch++;
+                if (epoch > 0)//System.out.println("Epoch #" + epoch + " Error:" + (train.getError() * 100.0) + "%");
+                {
+                    epoch++;
+                }
             } while (train.getError() > 0.003);
             trainData.clear();
             training = false;
@@ -178,5 +186,13 @@ public class ResilientNeuralController implements Controller {
                 car.moveForward();
             }
         }
+    }
+
+    boolean constantCurve(List<Integer> moves) {
+        int count = 0;
+        for (Integer move : moves) {
+            count += move;
+        }
+        return (Math.abs(count) > MAX_CURVE) ? true : false;
     }
 }

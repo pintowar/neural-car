@@ -5,7 +5,6 @@
 package com.googlecode.neuralcar;
 
 import com.googlecode.neuralcar.controller.Controller;
-import com.googlecode.neuralcar.controller.GeneticNeuralController;
 import com.googlecode.neuralcar.controller.HumanController;
 import com.googlecode.neuralcar.controller.ResilientNeuralController;
 import com.googlecode.neuralcar.util.Resources;
@@ -22,10 +21,15 @@ public class Game extends BasicGame {
 
     private Scenario scenario;
     private Car car;
-    private Controller controller = new GeneticNeuralController();
+    private Controller controller;
 
     public Game(String title) {
+        this(title, new HumanController());
+    }
+
+    public Game(String title, Controller controller) {
         super(title);
+        this.controller = controller;
     }
 
     @Override

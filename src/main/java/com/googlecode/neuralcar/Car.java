@@ -132,10 +132,9 @@ public final class Car {
         if (i != -1 & i != 1) {
             throw new SlickException("Move not supported");
         }
-        float addX = i * (10.0f - situationPoints()) / 10
-                * ((float) Math.sin(-rotation));
-        float addY = i * (10.0f - situationPoints()) / 10
-                * ((float) Math.cos(-rotation));
+        float c = i * (10.0f - situationPoints()) / 10;
+        float addX = c * ((float) Math.sin(-rotation));
+        float addY = c * ((float) Math.cos(-rotation));
         animationX += addX;
         animationY += addY;
         animationPoly.setCenterX(animationX + 12);

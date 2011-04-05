@@ -175,7 +175,7 @@ public class GeneticNeuralController implements Controller {
 
         @Override
         public boolean shouldMinimize() {
-            return false;
+            return true;
         }
     }
 }
